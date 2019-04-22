@@ -1,0 +1,21 @@
+.my-form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-right: -50%;
+}
+.content {
+    width: 500px;
+    height: 300px;
+    margin: 0 auto;
+    background-color: #9e9e9e36;
+}
+.chat-room{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.chat-form{
+    text-align: center;
+}

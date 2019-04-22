@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link  rel ="stylesheet" type = "text/css" href="./css/style.css" />
+    <title>Document</title>
+</head>
+<body>
+
+    <div class="user-name">
+        <input type = "text" placeholder = "Type or name here" name="username" id="username" required />
+        <input type = "submit" value="Register" name="chat" id="btn-login"/>
+    </div>
+
+    <div class="chat-room">
+        <div class="logout">
+            <button id="logout">Logout</button>
+        </div>
+        <div class="user-online">
+            <div class="title">User ONLINE</div>
+            <div id="user-onl_conent"></div>
+        </div>
+        <div class="say-hi">
+            Hello <span class="current-user"></span>
+        </div>
+        <div class="content">
+            <!-- chat content -->
+        </div>
+        <div class="typing"></div>
+        <div class="chat-form">
+                <input type="text" name="content" id="message">
+                <button id="bnt-chat"> Send </button>
+        </div> 
+    </div>
+
+
+
+    <!-- script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="./js/chat.js"></script>
+
+</body>
+</html>
