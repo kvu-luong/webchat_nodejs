@@ -45,6 +45,14 @@
     margin: 0 auto;
     background-color: #05e6ff0f;
     padding-right: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+.message-chat{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 .chat-room{
     display: flex;
@@ -156,6 +164,7 @@ span.m-time{
     display: flex;
     color: #16a3b3;
     line-height: 46px;
+    align-items: flex-end;
 }
 span.name_of_user{
     color: #05e6ff;

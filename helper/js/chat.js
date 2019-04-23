@@ -10,7 +10,7 @@ $(function(){
     var btnChat = $("#bnt-chat");
     var username = $("#username");
     var message = $("#message");
-    var chatroom = $(".content");
+    var chatroom = $(".message-chat");
 
     //register username
     btnLogin.click(function(){
@@ -86,7 +86,7 @@ $(function(){
          +"</div>");
     });
     socket.on("other_update_message", (data)=>{
-        chatroom.append("<div class='message'> <span class='user'>" + data.username +"</span>  "+
+        chatroom.append("<div class='message' style='align-self: flex-start;'> <span class='user'>" + data.username +"</span>  "+
          "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
          +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
          +"</div>")
@@ -100,7 +100,7 @@ $(function(){
     $(".typing").hide();
     socket.on('me_typing', (data)=>{
         $(".name_of_user").html(data);
-        $(".typing").show(1000); 
+        $(".typing").show(); 
     });
     socket.on("me_stop_typing",()=>{
         $(".name_of_user").html("");
