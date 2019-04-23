@@ -52,9 +52,9 @@ $(function(){
         socket.emit("logout");
     });
     socket.on("someone_logout", (data)=>{
-        $("#user-onl_conent").html("");
+        $("#user-onl_content").html("");
         data.forEach(function(user){
-            $("#user-onl_conent").append(
+            $("#user-onl_content").append(
                 "<div class='user'>"+user+"</div>"
             )
         });
@@ -74,11 +74,23 @@ $(function(){
         message.val("");
     });
     //get message 
-    socket.on("update_message", (data)=>{
-        chatroom.append("<div class='message'> <span class='user'>" + data.username +"</span>"+
-         ": <span class='m-content'>"+ data.message + "</span></div>")
+    socket.on("self_update_message", (data)=>{
+        chatroom.append("<div class='message self_position'>"+
+            "<div class='horizontal_m'>"+
+                " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
+                " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
+            "</div>"
+            +"<div>"+
+                "<span class='m-time' style='justify-content: flex-end'>"+data.time+"</span>"+ 
+            "</div>"
+         +"</div>");
     });
-
+    socket.on("other_update_message", (data)=>{
+        chatroom.append("<div class='message'> <span class='user'>" + data.username +"</span>  "+
+         "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
+         +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
+         +"</div>")
+    });
     message.focusin(()=>{
         socket.emit('typing');
     });

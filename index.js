@@ -38,10 +38,26 @@ io.on('connection', (socket) =>{
     })
     socket.on('new_message', (data)=>{
         console.log(data.message);
-        io.sockets.emit('update_message',
+        //gửi về chính nó
+        var time = new Date(Date.now());
+        var minute = time.getMinutes();
+        var second = time.getSeconds();
+        var hours = time.getHours();
+        var real_time = hours+":"+minute+":"+second;
+        socket.emit("self_update_message", 
         {
             message: data.message,
-            username: socket.username
+            username: socket.username,
+            color: "#00804566"  ,
+            time : real_time
+        })
+        //gửi cho những người khác
+        socket.broadcast.emit("other_update_message",
+        {
+            message: data.message,
+            username: socket.username,
+            color: "#efe4e4" ,
+            time: real_time 
         });
     });
     //typing action

@@ -130,13 +130,27 @@ button{
     padding-top: 12px;
     padding-left: 12px;
     word-wrap: break-word;
-    margin-top: 20px;
 }
-
+.self_position{
+    display: flex;
+    flex-direction: column;
+}
+.horizontal_m{
+    display: flex;
+    flex-direction: row-reverse;
+}
 span.m-content {
     background-color: #00804566;
     padding: 8px;
     border-radius: 50px;
+}
+span.m-time{
+    display: flex;
+    font-size: 12px;
+    text-align: left;
+    padding-top: 9px;
+    color: #ccc;
+    font-family: Courier;
 }
 @media only screen and (max-width: 768px) {
     .chat-room{
