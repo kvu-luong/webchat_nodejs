@@ -81,7 +81,7 @@ $(function(){
                 " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
             "</div>"
             +"<div>"+
-                "<span class='m-time' style='justify-content: flex-end'>"+data.time+"</span>"+ 
+                "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
             "</div>"
          +"</div>");
     });
@@ -97,11 +97,14 @@ $(function(){
     message.focusout(function(){
         socket.emit("stop_typing");
     });
+    $(".typing").hide();
     socket.on('me_typing', (data)=>{
-        $(".typing").html(data+" is typing");
+        $(".name_of_user").html(data);
+        $(".typing").show(1000); 
     });
     socket.on("me_stop_typing",()=>{
-        $(".typing").html("");
+        $(".name_of_user").html("");
+        $(".typing").hide();
     });
 
 })

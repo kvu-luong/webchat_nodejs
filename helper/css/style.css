@@ -152,6 +152,27 @@ span.m-time{
     color: #ccc;
     font-family: Courier;
 }
+.typing{
+    display: flex;
+    color: #16a3b3;
+    line-height: 46px;
+}
+span.name_of_user{
+    color: #05e6ff;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding-left: 12px;
+    padding-right: 5px;
+    line-height: 47px;
+}
+.typing > img {
+    width: 64px;
+    height: 44px;
+    background-color: transparent;
+    z-index: -1;
+    margin-left: -16px;
+}
 @media only screen and (max-width: 768px) {
     .chat-room{
         width: 100%;
