@@ -14,8 +14,23 @@ $(function(){
 
     //register username
     btnLogin.click(function(){
+        if(username.val() == ""){
+            alert ("Please type your name in textbox!!!");
+            return false;
+        }
         socket.emit('register', {name: username.val()});
     });
+    username.keyup(function(e){
+        if(e.keyCode == 13)
+        {
+            if(username.val() == ""){
+                alert ("Please type your name in textbox!!!");
+                return false;
+            }
+            socket.emit('register', {name: username.val()});
+        }
+    });
+         
     socket.on("register-fail", ()=>{
         alert("Username existed");
     });
@@ -23,11 +38,11 @@ $(function(){
         $(".current-user").html(data.username);
         $(".user-name").hide();
         $(".chat-room").show(2000);
-    })
+    });
     socket.on("send_user_online_list", (data)=>{
-        $("#user-onl_conent").html("");
+        $("#user-onl_content").html("");
         data.forEach(function(user){
-            $("#user-onl_conent").append(
+            $("#user-onl_content").append(
                 "<div class='user'>"+user+"</div>"
             )
         });
@@ -46,18 +61,22 @@ $(function(){
     });
     socket.on("you_logout", ()=>{
         alert("You log out successful");
-        $(".user-name").show(1000);
+        $(".user-name").show(500);
         $(".chat-room").hide();
     })
     //send message
     btnChat.click(function(e){
         e.preventDefault();
+        if(message.val() == ""){
+            return false;
+        }
         socket.emit('new_message', {message: message.val()});
         message.val("");
     });
     //get message 
     socket.on("update_message", (data)=>{
-        chatroom.append("<div class='message'>" + data.username +" : "+ data.message + "</div>")
+        chatroom.append("<div class='message'> <span class='user'>" + data.username +"</span>"+
+         ": <span class='m-content'>"+ data.message + "</span></div>")
     });
 
     message.focusin(()=>{
@@ -71,5 +90,6 @@ $(function(){
     });
     socket.on("me_stop_typing",()=>{
         $(".typing").html("");
-    })
+    });
+
 })

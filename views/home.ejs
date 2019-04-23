@@ -10,29 +10,33 @@
 <body>
 
     <div class="user-name">
-        <input type = "text" placeholder = "Type or name here" name="username" id="username" required />
-        <input type = "submit" value="Register" name="chat" id="btn-login"/>
+        <h3>What is your name?</h3>
+        <input type = "text" placeholder = "Type your name here" name="username" id="username" required />
+        <button id="btn-login">Register</button>
     </div>
 
     <div class="chat-room">
         <div class="logout">
+            Hello <span class="current-user"></span>
             <button id="logout">Logout</button>
         </div>
-        <div class="user-online">
-            <div class="title">User ONLINE</div>
-            <div id="user-onl_conent"></div>
+        <div class="content-user">
+            <div class="chat">
+                <div class="content">
+                    <!-- chat content -->
+                </div>
+                <div class="typing"></div>
+                <div class="chat-form">
+                        <input type="text" name="content" id="message"  autocomplete="off">
+                        <button id="bnt-chat"> Send </button>
+                </div> 
+            </div>
+            <div class="user-online">
+                <div class="title">User ONLINE</div>
+                <div id="user-onl_content"></div>
+            </div>
         </div>
-        <div class="say-hi">
-            Hello <span class="current-user"></span>
-        </div>
-        <div class="content">
-            <!-- chat content -->
-        </div>
-        <div class="typing"></div>
-        <div class="chat-form">
-                <input type="text" name="content" id="message">
-                <button id="bnt-chat"> Send </button>
-        </div> 
+        
     </div>
 
 
