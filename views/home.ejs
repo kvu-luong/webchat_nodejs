@@ -33,7 +33,7 @@
                 
                 <div class="chat-form">
                         <input type="text" name="content" placeholder = "Type your message here!" id="message"  autocomplete="off">
-                        <button id="bnt-chat"> Send </button>
+                        <button id="btn-chat"> Send </button>
                 </div> 
             </div>
             <div class="user-online">
@@ -41,7 +41,25 @@
                 <div id="user-onl_content"></div>
             </div>
         </div>
-        
+    </div>
+
+    <div class="private">
+        <div class="private-head">
+            <div>Chat with <span class="chat-with"></span></div>
+            <div><button class="close" id="close">Close</button></div>
+        </div>
+        <div class="private-content">
+                <div class="private-message_chat">
+                <!-- chat content -->
+                </div>
+                <div class="private-typing">
+                    <span class="name_of_user"></span><span>is typing</span><img src="./img/loader.gif" alt=""/>
+                </div>
+        </div>
+        <div class="private-chat">
+                <input type="text" name="content" placeholder = "Type your message here!" id="private_message"  autocomplete="off">
+                <button id="bnt-private__chat"> Chat </button>
+        </div>
     </div>
 
 

@@ -26,7 +26,7 @@
     border: none;
     width: 100px;
     height: 30px;
-    color: green;
+    color: white;
     font-size: 16px;
     margin: 10px auto;
     border-radius: 2px;
@@ -181,6 +181,61 @@ span.name_of_user{
     background-color: transparent;
     z-index: -1;
     margin-left: -16px;
+}
+
+/* private chat */
+.private {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 0 auto;
+}
+.private-content {
+    height: 500px;
+    background-color: #0fc2d6db;
+    padding-right: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+.private-chat {
+    text-align: center;
+    display: flex;
+}
+input#private_message {
+    width: 100%;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.private-chat > input {
+    color:  #210080;
+}
+.user{
+    cursor: pointer;
+}
+.private-head {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #31cbdc;
+}
+span.chat-with {
+    line-height: 35px;
+    font-size: 29px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #0064ffdb;
+}
+.close {
+    color: white;
+    border: none;
+    background-color: #16a3b3;
+    margin-top: 0px;
+    padding-right: 2px;
+    box-shadow: 0px 0px 5px red;
 }
 @media only screen and (max-width: 768px) {
     .chat-room{

@@ -10,10 +10,41 @@ app.use(express.static(__dirname + '/helper'));//set path to local file
 const http = require('http').Server(app);
 const io = require("socket.io")(http);
 
+//connect to database
+var mysql = require('mysql');
+var db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'node'
+})
+//db.connect(function(err){
+  //  if(err) console.log(err);
+//})
 //manage user register
 var user_array = [];
+var id_array = [];
+var isInitNotes = false;
 io.on('connection', (socket) =>{
     console.log("new user connect");
+  //  if (! isInitNotes) {
+        // Initial app start, run db query
+      //  db.query('SELECT * FROM notes')
+        //    .on('result', function(data){
+                // Push results onto the notes array
+         //       user_array.push(data)
+        //    })
+         //   .on('end', function(){
+                // Only emit notes after query has been completed
+               // socket.emit('initial_notes', user_array);
+             //   console.log(user_array);
+          //  })
+ 
+        isInitNotes = true
+ // } else {
+        // Initial notes already exist, send out
+      //  socket.emit('initial_notes', user_array)
+  //  }
+
     socket.on("register", (data)=>{
         //check user name in array
         if(user_array.indexOf(data.name) >=0){
@@ -21,10 +52,20 @@ io.on('connection', (socket) =>{
             socket.emit("register-fail",{message: "Username existed"});
         }else{
             //can register
-            user_array.push(data.name);
             socket.username = data.name;
-            socket.emit("register-success", {username: data.name});
-            io.sockets.emit("send_user_online_list", user_array);
+            user_array.push(data.name);
+            id_array.push(socket.id);
+             //remove socket which register
+             var user_arr = user_array.filter(function(element){
+                return element != data.name;
+            });
+            var id_arr = id_array.filter(function(element){
+                return element != socket.id;
+            });
+
+            socket.emit("register-success", {username: data.name, user_list: user_arr, id: id_arr});
+           
+            socket.broadcast.emit("send_user_online_list",{username: data.name , id: socket.id});
         }
     });
 
@@ -33,17 +74,20 @@ io.on('connection', (socket) =>{
         user_array.splice(
             user_array.indexOf(socket.username), 1
         )
-        socket.broadcast.emit("someone_logout", user_array);
+        //remove this id
+        id_array.splice(
+            id_array.indexOf(socket.id), 1
+        )
+        socket.broadcast.emit("someone_logout", {id_remove: socket.id});
         socket.emit("you_logout");
     })
+    var time = new Date(Date.now());
+    var minute = time.getMinutes();
+    var second = time.getSeconds();
+    var hours = time.getHours();
+    var real_time = hours+":"+minute+":"+second;
     socket.on('new_message', (data)=>{
-        console.log(data.message);
         //gửi về chính nó
-        var time = new Date(Date.now());
-        var minute = time.getMinutes();
-        var second = time.getSeconds();
-        var hours = time.getHours();
-        var real_time = hours+":"+minute+":"+second;
         socket.emit("self_update_message", 
         {
             message: data.message,
@@ -60,6 +104,34 @@ io.on('connection', (socket) =>{
             time: real_time 
         });
     });
+    //private chat
+    socket.on("private_chat", (data)=>{
+        socket.emit("private_id_target",
+         {
+            origin: socket.id,
+            id : data.user_id, 
+            name: data.user_name
+        }
+        );
+    })
+    socket.on("private_message", (data)=>{
+        //send to itself
+        socket.emit("private_self_message",{
+            username: socket.username,
+            color: "#00804566",
+            message: data.message,
+            time: real_time
+        });
+        //send to target
+
+        io.to(data.id).emit("private_target_message", 
+        {
+            message: data.message,
+            color: "#efe4e4",
+            username: socket.username,
+            time: real_time
+        });
+    })
     //typing action
     socket.on("typing", ()=>{
         socket.broadcast.emit("me_typing", socket.username);
@@ -67,7 +139,13 @@ io.on('connection', (socket) =>{
     socket.on("stop_typing",()=>{
         socket.broadcast.emit("me_stop_typing");
     })
-
+    //private typing action
+    socket.on("private-typing", ()=>{
+        socket.broadcast.emit("private_me_typing", socket.username);
+    });
+    socket.on("stop_typing",()=>{
+        socket.broadcast.emit("private_me_stop_typing");
+    })
     socket.on("disconnect",()=>{
         console.log(socket.username +" log out");
     })
