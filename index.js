@@ -160,13 +160,13 @@ io.on('connection', (socket) =>{
                             }
                         );
                     }
-                    if(reverseTarget_Source  && room_arr[x].total == 2){
-                        socket.emit("private_id_target",
-                        {
-                            room : room_arr[x],
-                        }
-                    );
-                    }              
+                    if(reverseTarget_Source  && !sameTarget_sameSource && room_arr[x].total == 2){
+                            socket.emit("private_id_target",
+                            {
+                                room : room_arr[x],
+                            }
+                         );
+                    }        
             }
         }
     })
@@ -193,8 +193,6 @@ io.on('connection', (socket) =>{
             if(room_arr[x].source == socket.id){
                 socket.leave(room_arr[x].name);
                 room_arr[x].total = 1;
-                console.log(room_arr);
-                console.log("inside close");
             }
         }
     })
