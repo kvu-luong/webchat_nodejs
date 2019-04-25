@@ -244,5 +244,7 @@ span.chat-with {
     .user-name {
         width: 65%;
     }
-
+    .user-name > h3 {
+        font-size: 30px;
+    }
   }

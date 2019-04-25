@@ -1,6 +1,5 @@
 $(function(){
    
-
     var socket = io.connect('http://localhost:3000');
     //hide and show form
     $(".user-name").show(2000);
@@ -126,27 +125,28 @@ $(function(){
     });
 
     //private chat
-    let id_target;
-    let name_target;
+    let room_name;
     socket.on("private_id_target", function(data){
-        id_target = data.id;
-        name_target = data.name;
+        room_name = data;
     });
-    $("#bnt-private__chat").click(function(e){
+    $("#bnt-private__chat").click(function(){
         if($("#private_message").val() == ""){
             return false;
         }  
         socket.emit("private_message",
         {
+            room: room_name.room.name,
             message : $("#private_message").val(),
-            id      : id_target,
-            name    : name_target
         }
         );
         $("#private_message").val("");
+        console.log(room_name.room.name);
     });
     socket.on("private_self_message", function(data){
-        $(".private-message_chat").append("<div class='private-m message self_position'>"+
+        //check first orign or not
+
+        $(".private-message_chat").append(
+        "<div class='message self_position'>"+
         "<div class='horizontal_m'>"+
             " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
             " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
@@ -166,6 +166,7 @@ $(function(){
         );
     });
     $("#close").click(function(){
+        socket.emit("close");
         $(".private-message_chat").html("");
         $(".private").hide();
         $(".chat-room").show(500);

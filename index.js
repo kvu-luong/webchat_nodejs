@@ -24,6 +24,9 @@ var db = mysql.createConnection({
 var user_array = [];
 var id_array = [];
 var isInitNotes = false;
+
+var room_arr = [];//contain room
+var count = 0;// make name different for each room
 io.on('connection', (socket) =>{
     console.log("new user connect");
   //  if (! isInitNotes) {
@@ -106,13 +109,66 @@ io.on('connection', (socket) =>{
     });
     //private chat
     socket.on("private_chat", (data)=>{
-        socket.emit("private_id_target",
-         {
-            origin: socket.id,
-            id : data.user_id, 
-            name: data.user_name
+        if(room_arr.length <= 0){
+            let room = {
+                name : "room"+count,
+                source : socket.id,
+                target : data.user_id,
+                total: 1
+            }
+            socket.join(room.name);
+            room_arr.push(room);
+            socket.emit("private_id_target",
+                {
+                    room : room,
+                    message: "initial"
+                }
+             );
+        }else{
+            for(x = 0; x < room_arr.length ; x++){
+                    let sameTarget_diffSource_1 = room_arr[x].source != socket.id && room_arr[x].target == data.user_id;
+                    let sameTarget_diffSource_2 = room_arr[x].source == data.user_id && room_arr[x].target !== socket.id;
+                    let sameTarget_sameSource = room_arr[x].source == socket.id && room_arr[x].target == data.user_id;
+                    let condition_1 = room_arr[x].source == socket.id || room_arr[x].source == data.user_id;
+                    let condition_2 = room_arr[x].target == socket.id || room_arr[x].target == data.user_id;
+                    let reverseTarget_Source = condition_1 && condition_2;
+
+                    if(sameTarget_diffSource_1 || sameTarget_diffSource_2){
+                        count = count + 1;
+                        let room_s = {
+                            name : "room"+count,
+                            source : socket.id,
+                            target : data.user_id,
+                            total: 1 
+                        }
+                        socket.join(room_s.name);
+                        room_arr.push(room_s);
+                        console.log("sameTarget diffSource");
+                        socket.emit("private_id_target",
+                            {
+                                room : room_s,
+                            }
+                        );
+                    }
+                    if(reverseTarget_Source && !sameTarget_sameSource && room_arr[x].total != 2){
+                        socket.join(room_arr[x].name);
+                        room_arr[x].total = 2;//room full
+                        console.log("reverseTandS")
+                        socket.emit("private_id_target",
+                            {
+                                room : room_arr[x],
+                            }
+                        );
+                    }
+                    if(reverseTarget_Source  && room_arr[x].total == 2){
+                        socket.emit("private_id_target",
+                        {
+                            room : room_arr[x],
+                        }
+                    );
+                    }              
+            }
         }
-        );
     })
     socket.on("private_message", (data)=>{
         //send to itself
@@ -123,14 +179,24 @@ io.on('connection', (socket) =>{
             time: real_time
         });
         //send to target
-
-        io.to(data.id).emit("private_target_message", 
+        socket.broadcast.to(data.room).emit("private_target_message", 
         {
             message: data.message,
             color: "#efe4e4",
             username: socket.username,
             time: real_time
         });
+    });
+    socket.on("close", ()=>{
+        for ( x = 0; x < room_arr.length ; x++){
+           
+            if(room_arr[x].source == socket.id){
+                socket.leave(room_arr[x].name);
+                room_arr[x].total = 1;
+                console.log(room_arr);
+                console.log("inside close");
+            }
+        }
     })
     //typing action
     socket.on("typing", ()=>{

@@ -1,0 +1,1 @@
+This is an application using nodejs and socket io to make comunication between one to all and one to one by using room
