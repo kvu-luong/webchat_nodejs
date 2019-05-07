@@ -66,6 +66,26 @@ $(function(){
             $(".chat-with").html(name);
             $(".chat-room").hide();
             socket.emit("private_chat", {user_id: id, user_name: name});
+            //check room exist or not
+            socket.on("inital_message_inroom", function(data){
+            console.log(data.message);
+                if(data.user_id == data.room.target && data.room.source == id ){
+                   if(data.message.length > 0){
+                       message.forEach(function(element){
+                        $(".private-message_chat").append(
+                            "<div class='message self_position'>"+
+                            "<div class='horizontal_m'>"+
+                                " <span class='user' style='margin-top: 10px'>" + name +"  </span>"+
+                                " <span class='m-content' style='background-color:#00804566'>"+ element+ "</span> "+
+                            "</div>"
+                            +"<div>"+
+                                "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                            "</div>"
+                        +"</div>");
+                       })
+                   }
+                }
+            });
         });
         //start event
     });
@@ -137,6 +157,9 @@ $(function(){
         {
             room: room_name.room.name,
             message : $("#private_message").val(),
+            target_id: room_name.room.target,
+            source : room_name.room.source,
+            total : room_name.room.total
         }
         );
         $("#private_message").val("");
@@ -144,26 +167,27 @@ $(function(){
     });
     socket.on("private_self_message", function(data){
         //check first orign or not
-
-        $(".private-message_chat").append(
-        "<div class='message self_position'>"+
-        "<div class='horizontal_m'>"+
-            " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
-            " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
-        "</div>"
-        +"<div>"+
-            "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
-        "</div>"
-     +"</div>");
+            $(".private-message_chat").append(
+                "<div class='message self_position'>"+
+                "<div class='horizontal_m'>"+
+                    " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
+                    " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
+                "</div>"
+                +"<div>"+
+                    "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                "</div>"
+            +"</div>");
+        
     });
     socket.on("private_target_message", function(data){
-        $(".private-message_chat").append(
-        "<div class='message' style='align-self: flex-start;'>" 
-            +"<span class='user'>" + data.username +"</span>  "+
-            "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
-            +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
-        +"</div>"
-        );
+            $(".private-message_chat").append(
+                "<div class='message' style='align-self: flex-start;'>" 
+                    +"<span class='user'>" +data.username+"</span>  "+
+                    "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
+                    +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
+                +"</div>"
+                );
+        
     });
     $("#close").click(function(){
         socket.emit("close");

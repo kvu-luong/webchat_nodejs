@@ -15,39 +15,19 @@ var mysql = require('mysql');
 var db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'node'
+    database: 'chat'
 })
-//db.connect(function(err){
-  //  if(err) console.log(err);
-//})
+db.connect(function(err){
+    if(err) console.log(err);
+});
 //manage user register
 var user_array = [];
 var id_array = [];
-var isInitNotes = false;
 
 var room_arr = [];//contain room
 var count = 0;// make name different for each room
 io.on('connection', (socket) =>{
     console.log("new user connect");
-  //  if (! isInitNotes) {
-        // Initial app start, run db query
-      //  db.query('SELECT * FROM notes')
-        //    .on('result', function(data){
-                // Push results onto the notes array
-         //       user_array.push(data)
-        //    })
-         //   .on('end', function(){
-                // Only emit notes after query has been completed
-               // socket.emit('initial_notes', user_array);
-             //   console.log(user_array);
-          //  })
- 
-        isInitNotes = true
- // } else {
-        // Initial notes already exist, send out
-      //  socket.emit('initial_notes', user_array)
-  //  }
-
     socket.on("register", (data)=>{
         //check user name in array
         if(user_array.indexOf(data.name) >=0){
@@ -109,6 +89,7 @@ io.on('connection', (socket) =>{
     });
     //private chat
     socket.on("private_chat", (data)=>{
+        
         if(room_arr.length <= 0){
             let room = {
                 name : "room"+count,
@@ -121,9 +102,17 @@ io.on('connection', (socket) =>{
             socket.emit("private_id_target",
                 {
                     room : room,
-                    message: "initial"
                 }
              );
+             var messages = get_message_from_data(data.user_id, socket.id);
+             console.log(messages);
+            socket.emit("inital_message_inroom", {
+                message: messages,
+                room: room,
+                user_id: socket.id,
+                time: real_time 
+
+            })
         }else{
             for(x = 0; x < room_arr.length ; x++){
                     let sameTarget_diffSource_1 = room_arr[x].source != socket.id && room_arr[x].target == data.user_id;
@@ -143,22 +132,34 @@ io.on('connection', (socket) =>{
                         }
                         socket.join(room_s.name);
                         room_arr.push(room_s);
-                        console.log("sameTarget diffSource");
                         socket.emit("private_id_target",
                             {
                                 room : room_s,
                             }
                         );
+                        var messages = get_message_from_data(data.user_id, socket.id);
+                        socket.emit("inital_message_inroom", {
+                            message: messages,
+                            room : room_s,
+                            user_id: socket.id,
+                            time: real_time 
+                        })
                     }
                     if(reverseTarget_Source && !sameTarget_sameSource && room_arr[x].total != 2){
                         socket.join(room_arr[x].name);
                         room_arr[x].total = 2;//room full
-                        console.log("reverseTandS")
                         socket.emit("private_id_target",
                             {
                                 room : room_arr[x],
                             }
                         );
+                        var messages = get_message_from_data(data.user_id, socket.id);
+                        socket.emit("inital_message_inroom", {
+                            message: messages,
+                            room : room_arr[x],
+                            user_id: socket.id,
+                            time: real_time 
+                        })
                     }
                     if(reverseTarget_Source  && !sameTarget_sameSource && room_arr[x].total == 2){
                             socket.emit("private_id_target",
@@ -166,30 +167,74 @@ io.on('connection', (socket) =>{
                                 room : room_arr[x],
                             }
                          );
+                        var messages = get_message_from_data(data.user_id, socket.id);
+                            socket.emit("inital_message_inroom", {
+                                message: messages,
+                                room: room_arr[x],
+                                user_id: socket.id,
+                                time: real_time 
+                            })
                     }        
             }
         }
-    })
+    });
+
+    function get_message_from_data($source, $target){
+        var sql1 = "SELECT * FROM `chat` WHERE source = '"+$source+"' AND target = '"+$target+"' ORDER BY time DESC";
+       var kq = [];
+       var getInformationFromDB = function(callback){
+       db.query(sql1, function (err, rows, fields) {
+          if (err) throw err;
+          for (var i in rows){
+              kq.push(rows[i].message);
+          }
+          callback(null, kq);
+        }); 
+       
+    }
+    getInformationFromDB(function (err, result){
+            if(err) console.log("Database Error")
+            else return result;
+
+        });
+        console.log(f_result);
+    }
     socket.on("private_message", (data)=>{
         //send to itself
-        socket.emit("private_self_message",{
-            username: socket.username,
-            color: "#00804566",
-            message: data.message,
-            time: real_time
-        });
-        //send to target
-        socket.broadcast.to(data.room).emit("private_target_message", 
-        {
-            message: data.message,
-            color: "#efe4e4",
-            username: socket.username,
-            time: real_time
-        });
-    });
+        if(data.total == 1){
+            var sql = "INSERT INTO chat (source, time ,message, target) VALUES ('"+socket.id+"','"+real_time+"','"+data.message+"','"+data.target_id+"')";
+            db.query(sql, function (err, result) {
+                if (err) throw err;
+            });
+            //first element join to room.
+            socket.emit("private_self_message",{
+                type: 1,
+                username: socket.username,
+                message: data.message,
+                time: real_time,
+                color: "#00804566",
+            });
+        }else{// when total = 2
+            socket.emit("private_self_message",{
+                type: 1,
+                username: socket.username,
+                message: data.message,
+                time: real_time,
+                color: "#00804566",
+            });
+            socket.broadcast.to(data.room).emit("private_target_message", 
+            {
+                
+                username: socket.username,
+                color: "#efe4e4",
+                message: data.message,
+                time: real_time
+            }); 
+        }
+    }); 
+    
     socket.on("close", ()=>{
         for ( x = 0; x < room_arr.length ; x++){
-           
             if(room_arr[x].source == socket.id){
                 socket.leave(room_arr[x].name);
                 room_arr[x].total = 1;
