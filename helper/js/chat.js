@@ -1,4 +1,4 @@
-$(function(){
+$(document).ready(function(){
    
     var socket = io.connect('http://localhost:3000');
     //hide and show form
