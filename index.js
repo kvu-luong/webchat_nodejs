@@ -221,7 +221,6 @@ io.on('connection', (socket) =>{
                 room_arr[x].total = 1;
             }
         }
-      
     })
     //typing action
     socket.on("typing", ()=>{
