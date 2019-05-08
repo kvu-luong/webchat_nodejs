@@ -170,7 +170,6 @@ io.on('connection', (socket) =>{
                 }
                 temp_array.push(temp_arr);//store all inital message in array
             }else{// when total = 2
-                console.log(temp_array);
                 if(temp_array.length > 1){
                     temp_arr = {
                         "id": data.source+data.target_id,
@@ -222,6 +221,7 @@ io.on('connection', (socket) =>{
                 room_arr[x].total = 1;
             }
         }
+      
     })
     //typing action
     socket.on("typing", ()=>{

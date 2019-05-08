@@ -67,26 +67,7 @@ $(document).ready(function(){
             $(".chat-with").html(name);
             $(".chat-room").hide();
             socket.emit("private_chat", {user_id: id, user_name: name});
-            //check room exist or not
-            socket.on("inital_message_inroom", function(data){
-            console.log(data.message);
-                if(data.user_id == data.room.target && data.room.source == id ){
-                   if(data.message.length > 0){
-                       message.forEach(function(element){
-                        $(".private-message_chat").append(
-                            "<div class='message self_position'>"+
-                            "<div class='horizontal_m'>"+
-                                " <span class='user' style='margin-top: 10px'>" + name +"  </span>"+
-                                " <span class='m-content' style='background-color:#00804566'>"+ element+ "</span> "+
-                            "</div>"
-                            +"<div>"+
-                                "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
-                            "</div>"
-                        +"</div>");
-                       })
-                   }
-                }
-            });
+          
         });
         //start event
     });
