@@ -1,6 +1,7 @@
 $(document).ready(function(){
    
-    var socket = io.connect('https://gochatnow.herokuapp.com/');
+    var socket = io.connect('http://localhost:3000');
+    //var socket = io.connect('https://gochatnow.herokuapp.com/');
     //hide and show form
     $(".user-name").show(2000);
     $(".chat-room").hide();
@@ -167,16 +168,45 @@ $(document).ready(function(){
     });
     socket.on("private_self_message", function(data){
         //check first orign or not
-            $(".private-message_chat").append(
-                "<div class='message self_position'>"+
-                "<div class='horizontal_m'>"+
-                    " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
-                    " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
-                "</div>"
-                +"<div>"+
-                    "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
-                "</div>"
-            +"</div>");
+        if(data.type == 1){
+            for(var i = 0; i< data.rows.length; i++){
+                if( i == data.rows.length - 1){//last message
+                    $(".private-message_chat").append(
+                
+                        "<div class='message self_position'>"+
+                        "<div class='horizontal_m'>"+
+                            " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
+                            " <span class='m-content' style='background-color:#00804566'>"+  data.rows[i].message  + "</span> "+
+                        "</div>"
+                        +"<div>"+
+                            "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                        "</div>"
+                    +"</div>"
+                    );
+                }else{
+                $(".private-message_chat").append(
+                    "<div class='message' style='align-self: flex-start;'>" 
+                        +"<span class='user'>" +data.username+"</span>  "+
+                        "<span class='m-content' style='background-color:"+data.color+"'>"+ data.rows[i].message + "</span>"
+                        +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
+                    +"</div>"
+                    );
+                } 
+            }
+        }else{
+                    $(".private-message_chat").append(
+                
+                        "<div class='message self_position'>"+
+                        "<div class='horizontal_m'>"+
+                            " <span class='user' style='margin-top: 10px'>" + data.username +"  </span>"+
+                            " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
+                        "</div>"
+                        +"<div>"+
+                            "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                        "</div>"
+                    +"</div>"
+                    );
+            }
         
     });
     socket.on("private_target_message", function(data){

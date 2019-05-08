@@ -26,6 +26,7 @@ var id_array = [];
 
 var room_arr = [];//contain room
 var count = 0;// make name different for each room
+var temp_array = [];
 io.on('connection', (socket) =>{
     console.log("new user connect");
     socket.on("register", (data)=>{
@@ -104,15 +105,6 @@ io.on('connection', (socket) =>{
                     room : room,
                 }
              );
-             var messages = get_message_from_data(data.user_id, socket.id);
-             console.log(messages);
-            socket.emit("inital_message_inroom", {
-                message: messages,
-                room: room,
-                user_id: socket.id,
-                time: real_time 
-
-            })
         }else{
             for(x = 0; x < room_arr.length ; x++){
                     let sameTarget_diffSource_1 = room_arr[x].source != socket.id && room_arr[x].target == data.user_id;
@@ -137,13 +129,6 @@ io.on('connection', (socket) =>{
                                 room : room_s,
                             }
                         );
-                        var messages = get_message_from_data(data.user_id, socket.id);
-                        socket.emit("inital_message_inroom", {
-                            message: messages,
-                            room : room_s,
-                            user_id: socket.id,
-                            time: real_time 
-                        })
                     }
                     if(reverseTarget_Source && !sameTarget_sameSource && room_arr[x].total != 2){
                         socket.join(room_arr[x].name);
@@ -153,13 +138,6 @@ io.on('connection', (socket) =>{
                                 room : room_arr[x],
                             }
                         );
-                        var messages = get_message_from_data(data.user_id, socket.id);
-                        socket.emit("inital_message_inroom", {
-                            message: messages,
-                            room : room_arr[x],
-                            user_id: socket.id,
-                            time: real_time 
-                        })
                     }
                     if(reverseTarget_Source  && !sameTarget_sameSource && room_arr[x].total == 2){
                             socket.emit("private_id_target",
@@ -167,70 +145,74 @@ io.on('connection', (socket) =>{
                                 room : room_arr[x],
                             }
                          );
-                        var messages = get_message_from_data(data.user_id, socket.id);
-                            socket.emit("inital_message_inroom", {
-                                message: messages,
-                                room: room_arr[x],
-                                user_id: socket.id,
-                                time: real_time 
-                            })
                     }        
             }
         }
     });
 
-    function get_message_from_data($source, $target){
-        var sql1 = "SELECT * FROM `chat` WHERE source = '"+$source+"' AND target = '"+$target+"' ORDER BY time DESC";
-       var kq = [];
-       var getInformationFromDB = function(callback){
-       db.query(sql1, function (err, rows, fields) {
-          if (err) throw err;
-          for (var i in rows){
-              kq.push(rows[i].message);
-          }
-          callback(null, kq);
-        }); 
-       
-    }
-    getInformationFromDB(function (err, result){
-            if(err) console.log("Database Error")
-            else return result;
 
-        });
-        console.log(f_result);
-    }
     socket.on("private_message", (data)=>{
         //send to itself
-        if(data.total == 1){
-            var sql = "INSERT INTO chat (source, time ,message, target) VALUES ('"+socket.id+"','"+real_time+"','"+data.message+"','"+data.target_id+"')";
-            db.query(sql, function (err, result) {
-                if (err) throw err;
-            });
-            //first element join to room.
-            socket.emit("private_self_message",{
-                type: 1,
-                username: socket.username,
-                message: data.message,
-                time: real_time,
-                color: "#00804566",
-            });
-        }else{// when total = 2
-            socket.emit("private_self_message",{
-                type: 1,
-                username: socket.username,
-                message: data.message,
-                time: real_time,
-                color: "#00804566",
-            });
-            socket.broadcast.to(data.room).emit("private_target_message", 
-            {
+
+            if(data.total == 1){
+                //first element join to room.
+                socket.emit("private_self_message",{
+                    type: 2,
+                    username: socket.username,
+                    message: data.message,
+                    time: real_time,
+                    color: "#00804566",
+                });
                 
-                username: socket.username,
-                color: "#efe4e4",
-                message: data.message,
-                time: real_time
-            }); 
-        }
+                temp_arr = {
+                    "id": data.source+data.target_id,
+                    "message": data.message
+                }
+                temp_array.push(temp_arr);//store all inital message in array
+            }else{// when total = 2
+                console.log(temp_array);
+                if(temp_array.length > 1){
+                    temp_arr = {
+                        "id": data.source+data.target_id,
+                        "message": data.message
+                    }
+                    temp_array.push(temp_arr);
+                    var mess_arr = temp_array.filter(function(value, index, arr){
+                        return value.id ==  data.source+data.target_id;
+                    })
+                            socket.emit("private_self_message",{
+                                type: 1,
+                                username: socket.username,
+                                rows: mess_arr,
+                                time: real_time,
+                                color: "#efe4e4",
+                            });
+                  //reset array after send initial message
+                  var rest_array = temp_array.filter(function(value, index, arr){
+                        return value.id != data.source+data.target_id;
+                  });
+                  temp_array = rest_array;
+                  
+                }else{
+                    socket.emit("private_self_message",{
+                        type: 2,
+                        username: socket.username,
+                        message: data.message,
+                        time: real_time,
+                        color: "#00804566",
+                    });
+                }
+            }
+       
+        
+        //both case
+        socket.broadcast.to(data.room).emit("private_target_message", 
+        {
+            username: socket.username,
+            color: "#efe4e4",
+            message: data.message,
+            time: real_time
+        }); 
     }); 
     
     socket.on("close", ()=>{
