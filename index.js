@@ -163,14 +163,21 @@ io.on('connection', (socket) =>{
                     time: real_time,
                     color: "#00804566",
                 });
-                
-                temp_arr = {
-                    "id": data.source+data.target_id,
-                    "message": data.message
-                }
-                temp_array.push(temp_arr);//store all inital message in array
+                var check_arr = temp_array.map(function(value, index, arr){
+                    return value.id;
+                });
+                var check_arr = temp_array.map(function(value, index, arr){
+                    return value.message;
+                });
+                if(check_arr.includes(data.source+data.target_id) && !check_arr.includes("donks") ){//exist and already done
+                    temp_arr = {
+                        "id": data.source+data.target_id,
+                        "message": data.message
+                    }
+                    temp_array.push(temp_arr);//store all inital message in array
+                 }
             }else{// when total = 2
-                if(temp_array.length > 1){
+                if(temp_array.length > 0){
                     temp_arr = {
                         "id": data.source+data.target_id,
                         "message": data.message
@@ -190,6 +197,10 @@ io.on('connection', (socket) =>{
                   var rest_array = temp_array.filter(function(value, index, arr){
                         return value.id != data.source+data.target_id;
                   });
+                  rest_array.push({
+                      id: data.source+data.target_id,
+                      message: "donks"
+                  })
                   temp_array = rest_array;
                   
                 }else{
