@@ -1,7 +1,7 @@
 $(document).ready(function(){
    
-    var socket = io.connect('http://localhost:3000');
-    //var socket = io.connect('https://gochatnow.herokuapp.com/');
+    //var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('https://gochatnow.herokuapp.com/');
     //hide and show form
     $(".user-name").show(2000);
     $(".chat-room").hide();
