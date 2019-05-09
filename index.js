@@ -153,7 +153,6 @@ io.on('connection', (socket) =>{
 
     socket.on("private_message", (data)=>{
         //send to itself
-
             if(data.total == 1){
                 //first element join to room.
                 socket.emit("private_self_message",{
@@ -163,13 +162,21 @@ io.on('connection', (socket) =>{
                     time: real_time,
                     color: "#00804566",
                 });
-                var check_arr = temp_array.map(function(value, index, arr){
-                    return value.id;
-                });
-                var check_arr = temp_array.map(function(value, index, arr){
+             
+                var check_arr_2 = temp_array.map(function(value, index, arr){
                     return value.message;
                 });
-                if(check_arr.includes(data.source+data.target_id) && !check_arr.includes("donks") ){//exist and already done
+                var check_exist = 0;// not exist
+                if(check_arr_2.includes("donks")){
+                    var check_arr_1 = temp_array.map(function(value, index, arr){
+                        return value.id;
+                    });
+                    if(check_arr_1.includes(data.source+data.target_id)){
+                        check_exist = 1;
+                    }
+                }
+                console.log(check_exist)
+                if(check_exist == 0 ){//exist and already done
                     temp_arr = {
                         "id": data.source+data.target_id,
                         "message": data.message
@@ -185,14 +192,17 @@ io.on('connection', (socket) =>{
                     temp_array.push(temp_arr);
                     var mess_arr = temp_array.filter(function(value, index, arr){
                         return value.id ==  data.source+data.target_id;
-                    })
-                            socket.emit("private_self_message",{
-                                type: 1,
-                                username: socket.username,
-                                rows: mess_arr,
-                                time: real_time,
-                                color: "#efe4e4",
-                            });
+                    })//lọc id
+                    var mess_final = mess_arr.filter(function(value, index, arr){
+                        return value.message != "donks";
+                    }); //lọc message
+                    socket.emit("private_self_message",{
+                        type: 1,
+                        username: socket.username,
+                        rows: mess_final,
+                        time: real_time,
+                        color: "#efe4e4",
+                    });
                   //reset array after send initial message
                   var rest_array = temp_array.filter(function(value, index, arr){
                         return value.id != data.source+data.target_id;
@@ -202,7 +212,7 @@ io.on('connection', (socket) =>{
                       message: "donks"
                   })
                   temp_array = rest_array;
-                  
+                  console.log("inside done");
                 }else{
                     socket.emit("private_self_message",{
                         type: 2,
@@ -211,6 +221,7 @@ io.on('connection', (socket) =>{
                         time: real_time,
                         color: "#00804566",
                     });
+                    console.log("outside done");
                 }
             }
        
@@ -226,12 +237,17 @@ io.on('connection', (socket) =>{
     }); 
     
     socket.on("close", ()=>{
+        var id; //id message out 
         for ( x = 0; x < room_arr.length ; x++){
             if(room_arr[x].source == socket.id){
                 socket.leave(room_arr[x].name);
                 room_arr[x].total = 1;
+                id = room_arr[x].source+room_arr[x].target;
             }
         }
+        temp_array = temp_array.filter(function(value, index, arr){
+            return value.id != id;
+        })
     })
     //typing action
     socket.on("typing", ()=>{

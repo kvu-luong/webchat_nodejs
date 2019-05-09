@@ -145,7 +145,7 @@ $(document).ready(function(){
         }
         );
         $("#private_message").val("");
-        console.log(room_name.room.name);
+        document.getElementsByClassName('private-content').scrollTop = document.getElementsByClassName('private-content').scrollHeight;
     });
     socket.on("private_self_message", function(data){
         //check first orign or not
@@ -160,16 +160,16 @@ $(document).ready(function(){
                             " <span class='m-content' style='background-color:#00804566'>"+  data.rows[i].message  + "</span> "+
                         "</div>"
                         +"<div>"+
-                            "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                            "<span class='m-time' style='justify-content: flex-start ; padding-top: 0px;'>"+data.time+"</span>"+ 
                         "</div>"
                     +"</div>"
                     );
                 }else{
                 $(".private-message_chat").append(
-                    "<div class='message' style='align-self: flex-start;'>" 
+                    "<div class='message' style='align-self: flex-end;'>" 
                         +"<span class='user'>" +data.username+"</span>  "+
                         "<span class='m-content' style='background-color:"+data.color+"'>"+ data.rows[i].message + "</span>"
-                        +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
+                        +"<span class='m-time'  style='justify-content: flex-end'>"+data.time+"</span>"
                     +"</div>"
                     );
                 } 
@@ -183,7 +183,7 @@ $(document).ready(function(){
                             " <span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span> "+
                         "</div>"
                         +"<div>"+
-                            "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
+                            "<span class='m-time' style='justify-content: flex-start ; padding-top: 0px;'>"+data.time+"</span>"+ 
                         "</div>"
                     +"</div>"
                     );
@@ -192,10 +192,10 @@ $(document).ready(function(){
     });
     socket.on("private_target_message", function(data){
             $(".private-message_chat").append(
-                "<div class='message' style='align-self: flex-start;'>" 
+                "<div class='message' style='align-self: flex-end;'>" 
                     +"<span class='user'>" +data.username+"</span>  "+
                     "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
-                    +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
+                    +"<span class='m-time'  style='justify-content: flex-end'>"+data.time+"</span>"
                 +"</div>"
                 );
         

@@ -145,12 +145,13 @@ button{
 }
 .horizontal_m{
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
 }
 span.m-content {
     background-color: #00804566;
     padding: 8px;
     border-radius: 50px;
+    direction: ltr;
 }
 span.m-time{
     display: flex;
@@ -215,6 +216,8 @@ input#private_message {
 }
 .user{
     cursor: pointer;
+    word-break: normal;
+    direction: ltr;
 }
 .private-head {
     display: flex;
@@ -240,6 +243,15 @@ span.chat-with {
 .private-content {
     overflow-y: scroll;
     margin-right: -10px;
+    transform: rotate(180deg);
+    direction: rtl;
+}
+.private-message_chat {
+    transform: rotate(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
 }
 /* SCROLLBAR */
 /* Let's get this party started */
