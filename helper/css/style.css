@@ -194,7 +194,6 @@ span.name_of_user{
 .private-content {
     height: 500px;
     background-color: #0fc2d6db;
-    padding-right: 10px;
     display: flex;
     justify-content: space-between;
     flex-direction: column;

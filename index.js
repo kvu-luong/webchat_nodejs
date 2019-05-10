@@ -11,16 +11,16 @@ const http = require('http').Server(app);
 const io = require("socket.io")(http);
 
 //connect to database
-var mysql = require('mysql');
-var db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'chat'
-})
-db.connect(function(err){
-    if(err) console.log(err);
-});
-//manage user register
+// var mysql = require('mysql');
+// var db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     database: 'chat'
+// })
+// db.connect(function(err){
+//     if(err) console.log(err);
+// });
+// //manage user register
 var user_array = [];
 var id_array = [];
 
@@ -65,12 +65,13 @@ io.on('connection', (socket) =>{
         socket.broadcast.emit("someone_logout", {id_remove: socket.id});
         socket.emit("you_logout");
     })
-    var time = new Date(Date.now());
-    var minute = time.getMinutes();
-    var second = time.getSeconds();
-    var hours = time.getHours();
-    var real_time = hours+":"+minute+":"+second;
+   
     socket.on('new_message', (data)=>{
+        var time = new Date(Date.now());
+        var minute = time.getMinutes();
+        var second = time.getSeconds();
+        var hours = time.getHours();
+        var real_time = hours+":"+minute+":"+second;
         //gửi về chính nó
         socket.emit("self_update_message", 
         {
@@ -96,7 +97,8 @@ io.on('connection', (socket) =>{
                 name : "room"+count,
                 source : socket.id,
                 target : data.user_id,
-                total: 1
+                total: 1,
+                username: data.user_name
             }
             socket.join(room.name);
             room_arr.push(room);
@@ -120,7 +122,8 @@ io.on('connection', (socket) =>{
                             name : "room"+count,
                             source : socket.id,
                             target : data.user_id,
-                            total: 1 
+                            total: 1 ,
+                            username: data.user_name
                         }
                         socket.join(room_s.name);
                         room_arr.push(room_s);
@@ -152,6 +155,11 @@ io.on('connection', (socket) =>{
 
 
     socket.on("private_message", (data)=>{
+        var time_1 = new Date(Date.now());
+        var minute_1 = time_1.getMinutes();
+        var second_1 = time_1.getSeconds();
+        var hours_1 = time_1.getHours();
+        var real_time_1 = hours_1+":"+minute_1+":"+second_1;
         //send to itself
             if(data.total == 1){
                 //first element join to room.
@@ -159,7 +167,7 @@ io.on('connection', (socket) =>{
                     type: 2,
                     username: socket.username,
                     message: data.message,
-                    time: real_time,
+                    time: real_time_1,
                     color: "#00804566",
                 });
              
@@ -167,29 +175,35 @@ io.on('connection', (socket) =>{
                     return value.message;
                 });
                 var check_exist = 0;// not exist
-                if(check_arr_2.includes("donks")){
-                    var check_arr_1 = temp_array.map(function(value, index, arr){
-                        return value.id;
-                    });
-                    if(check_arr_1.includes(data.source+data.target_id)){
-                        check_exist = 1;
-                    }
+                var check_arr_1 = temp_array.map(function(value, index, arr){
+                    return value.id;
+                });
+                if(check_arr_2.includes("donks") && check_arr_1.includes(data.source+data.target_id) ){
+                    check_exist = 1;
                 }
-                console.log(check_exist)
+              
+               
                 if(check_exist == 0 ){//exist and already done
                     temp_arr = {
                         "id": data.source+data.target_id,
-                        "message": data.message
+                        "message": data.message,
+                        "username": socket.username
                     }
                     temp_array.push(temp_arr);//store all inital message in array
+                  
                  }
+                 for(var i in temp_arr){
+                    console.log("gửi----"+ temp_arr[i]);
+                 }
+               
             }else{// when total = 2
                 if(temp_array.length > 0){
                     temp_arr = {
                         "id": data.source+data.target_id,
-                        "message": data.message
+                        "message": data.message,
+                        "username": socket.username
                     }
-                    temp_array.push(temp_arr);
+                    temp_array.push(temp_arr);//thêm tin nhắn mới tới khi mà user khác vừa vào phòng
                     var mess_arr = temp_array.filter(function(value, index, arr){
                         return value.id ==  data.source+data.target_id;
                     })//lọc id
@@ -200,7 +214,7 @@ io.on('connection', (socket) =>{
                         type: 1,
                         username: socket.username,
                         rows: mess_final,
-                        time: real_time,
+                        time: real_time_1,
                         color: "#efe4e4",
                     });
                   //reset array after send initial message
@@ -208,17 +222,18 @@ io.on('connection', (socket) =>{
                         return value.id != data.source+data.target_id;
                   });
                   rest_array.push({
-                      id: data.source+data.target_id,
-                      message: "donks"
+                      "id": data.source+data.target_id,
+                      "message": "donks",
+                      "username": data.username
+
                   })
                   temp_array = rest_array;
-                  console.log("inside done");
                 }else{
                     socket.emit("private_self_message",{
                         type: 2,
                         username: socket.username,
                         message: data.message,
-                        time: real_time,
+                        time: real_time_1,
                         color: "#00804566",
                     });
                     console.log("outside done");
@@ -232,22 +247,26 @@ io.on('connection', (socket) =>{
             username: socket.username,
             color: "#efe4e4",
             message: data.message,
-            time: real_time
+            time: real_time_1
         }); 
     }); 
     
-    socket.on("close", ()=>{
-        var id; //id message out 
+    socket.on("close", (data)=>{
+       var id; //id message out 
+     
         for ( x = 0; x < room_arr.length ; x++){
-            if(room_arr[x].source == socket.id){
+            //var dk_1 = room_arr[x].target == socket.id && room_arr[x].total == 2;
+            var dk_2 = room_arr[x].source == socket.id && room_arr[x].target == 1;
+            if(dk_2){
                 socket.leave(room_arr[x].name);
                 room_arr[x].total = 1;
                 id = room_arr[x].source+room_arr[x].target;
             }
         }
-        temp_array = temp_array.filter(function(value, index, arr){
-            return value.id != id;
-        })
+        console.log(id+"-"+socket.username);
+        // temp_array = temp_array.filter(function(value, index, arr){//remove message donks
+        //     return value.id != id;
+        // })
     })
     //typing action
     socket.on("typing", ()=>{

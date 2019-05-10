@@ -56,6 +56,7 @@ $(document).ready(function(){
     });
     //add private chat when user list have been send back
     $(".private").hide();
+    var previous_target = $(".chat-with").text();
     socket.on("send_user_online_list", (data)=>{
         $("#user-onl_content").append(
             "<div class='user'><button class='private_user' id='"+data.id+"'>"+data.username+"</button></div>"
@@ -67,7 +68,13 @@ $(document).ready(function(){
             $(".chat-with").html(name);
             $(".chat-room").hide();
             socket.emit("private_chat", {user_id: id, user_name: name});
-          
+            var now_target = $(".chat-with").text();
+            console.log(previous_target+"-"+now_target);
+       
+            if(previous_target != now_target && previous_target != undefined){
+                $(".private-message_chat").html("");
+                previous_target = $(".chat-with").text();
+            }
         });
         //start event
     });
@@ -128,10 +135,14 @@ $(document).ready(function(){
 
     //private chat
     let room_name;
+ 
     socket.on("private_id_target", function(data){
         room_name = data;
+        
     });
+
     $("#bnt-private__chat").click(function(){
+
         if($("#private_message").val() == ""){
             return false;
         }  
@@ -141,11 +152,12 @@ $(document).ready(function(){
             message : $("#private_message").val(),
             target_id: room_name.room.target,
             source : room_name.room.source,
-            total : room_name.room.total
+            total : room_name.room.total,
+            username: room_name.room.username
         }
         );
         $("#private_message").val("");
-        document.getElementsByClassName('private-content').scrollTop = document.getElementsByClassName('private-content').scrollHeight;
+        
     });
     socket.on("private_self_message", function(data){
         //check first orign or not
@@ -162,14 +174,16 @@ $(document).ready(function(){
                         +"<div>"+
                             "<span class='m-time' style='justify-content: flex-start ; padding-top: 0px;'>"+data.time+"</span>"+ 
                         "</div>"
+                        +"<input type='hidden' value='"+data.target+"' class='target_id' >"
                     +"</div>"
                     );
                 }else{
                 $(".private-message_chat").append(
                     "<div class='message' style='align-self: flex-end;'>" 
-                        +"<span class='user'>" +data.username+"</span>  "+
+                        +"<span class='user'>" +data.rows[i].username+"</span>  "+
                         "<span class='m-content' style='background-color:"+data.color+"'>"+ data.rows[i].message + "</span>"
                         +"<span class='m-time'  style='justify-content: flex-end'>"+data.time+"</span>"
+                        +"<input type='hidden' value='"+data.target+"' class='target_id' >"
                     +"</div>"
                     );
                 } 
@@ -200,9 +214,14 @@ $(document).ready(function(){
                 );
         
     });
+  
     $("#close").click(function(){
-        socket.emit("close");
-        $(".private-message_chat").html("");
+        var user_target = $(".target_id").val();
+        socket.emit("close",{
+            "target": user_target,
+        });
+
+        //$(".private-message_chat").html("");
         $(".private").hide();
         $(".chat-room").show(500);
     })
