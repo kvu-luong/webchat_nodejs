@@ -161,6 +161,7 @@ io.on('connection', (socket) =>{
         var hours_1 = time_1.getHours();
         var real_time_1 = hours_1+":"+minute_1+":"+second_1;
         //send to itself
+        console.log(data.total);
             if(data.total == 1){
                 //first element join to room.
                 socket.emit("private_self_message",{
@@ -170,15 +171,20 @@ io.on('connection', (socket) =>{
                     time: real_time_1,
                     color: "#00804566",
                 });
-             
+                console.log("on check_arr_2");
                 var check_arr_2 = temp_array.map(function(value, index, arr){
                     return value.message;
                 });
+                console.log("check"+ check_arr_2);
                 var check_exist = 0;// not exist
-                var check_arr_1 = temp_array.map(function(value, index, arr){
-                    return value.id;
+                var check_arr_1 = temp_array.filter(function(value, index, arr){//get all element contain donks message
+                    return value.message == "donks";
                 });
-                if(check_arr_2.includes("donks") && check_arr_1.includes(data.source+data.target_id) ){
+                var check_id_contain_donks = check_arr_1.map(function(value, index, arr){// array id have message donks
+                    return value.id;
+                })
+                console.log("check id"+ check_id_contain_donks+"-=="+data.source+data.target_id);
+                if(check_id_contain_donks.includes(data.source+data.target_id) ){
                     check_exist = 1;
                 }
               
@@ -190,12 +196,8 @@ io.on('connection', (socket) =>{
                         "username": socket.username
                     }
                     temp_array.push(temp_arr);//store all inital message in array
-                  
+                  console.log("inside check exist");
                  }
-                 for(var i in temp_arr){
-                    console.log("gửi----"+ temp_arr[i]);
-                 }
-               
             }else{// when total = 2
                 if(temp_array.length > 0){
                     temp_arr = {
