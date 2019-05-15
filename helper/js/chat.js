@@ -1,4 +1,4 @@
-$(document).ready(function()
+$(document).ready(function(){
    //select and upload file
     $("#select-file").on("click", function(){
         $("#file").click();//get file
@@ -51,9 +51,6 @@ $(document).ready(function()
            "<div class='horizontal_m'>"+
                " <img class='user' style='margin-top: 10px ; background-color:"+data.color+";' src='" + link +"'>"+
            "</div>"
-           +"<div>"+
-               "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
-           "</div>"
         +"</div>");
         //scroll bar
         $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
@@ -69,7 +66,6 @@ $(document).ready(function()
     var link = infor.dir.split("\\")[1]+"\\"+infor.dir.split("\\")[2];
        $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
        "<img class='m-content' style='background-color:"+data.color+"' src='"+ link +"' >"
-       +"<span class='m-time'  style='justify-content: flex-start'>"+data.time+"</span>"
        +"</div>");
     //scroll bar
     $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
@@ -209,7 +205,7 @@ $(document).ready(function()
          +"</div>");
          //scroll bar
         $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
-
+    });
     socket.on("other_update_message", (data)=>{
         chatroom.append("<div class='message' style='align-self: flex-start;'> <span class='user'>" + data.username +"</span>  "+
          "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
