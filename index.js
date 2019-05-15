@@ -79,12 +79,15 @@ io.on('connection', (socket) =>{
         var real_time = hours+":"+minute+":"+second;
 		var infor = {
 			"name": data.fileInfo.name,
-			"dir": data.fileInfo.uploadDir,
-		}
+            "dir": data.fileInfo.uploadDir,
+            "type": data.fileInfo.mime
+        }
+        console.log(infor.type);
+        console.log("mamama");
 		socket.emit("self-show-image",{
             "fileInfo": infor,
             "time": real_time,
-            "color": "#00804566"
+            "color": "#00804566",
         });
         socket.broadcast.emit("other-show-image",{
             "fileInfo": infor,

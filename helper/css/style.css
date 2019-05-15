@@ -147,6 +147,7 @@ button{
 .horizontal_m{
     display: flex;
     flex-direction: row;
+    direction: rtl;
 }
 span.m-content {
     background-color: #00804566;

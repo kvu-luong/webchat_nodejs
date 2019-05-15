@@ -33,7 +33,6 @@ $(document).ready(function(){
    });
    uploader.on('complete', function(fileInfo) {
        console.log('Upload Complete', fileInfo);
-       
        socket.emit("send-file", {
            "fileInfo": fileInfo
        })
@@ -44,14 +43,30 @@ $(document).ready(function(){
        var infor = {
            "name": data.fileInfo.name,
            "dir": data.fileInfo.dir,
+           "type": data.fileInfo.type
        }
+       console.log(infor.type);
+       console.log("KKKK");
        var link = infor.dir.split("\\")[1]+"\\"+infor.dir.split("\\")[2];
-       
-       $(".message-chat").append("<div class='message self_position'>"+
-           "<div class='horizontal_m'>"+
-               " <a data-fancybox='gallery' href='"+link+"'><img class='user' style='margin-top: 10px ; background-color:"+data.color+";' src='" + link +"'></a>"+
-           "</div>"
+       if(infor.type != "image/jpeg"){
+        $(".message-chat").append("<div class='message self_position'>"+
+        "<div class='horizontal_m'>"+
+            " <a  href='"+link+"' class='user' style='margin-top: 10px ; background-color:"+data.color+";'>"+infor.name+"</a>"+
+        "</div>"
+    +"</div>");
+       }else if(infor.type == "video/x-ms-wmv"){
+        $(".message-chat").append("<div class='message self_position'>"+
+        "<div class='horizontal_m'>"+
+            " <a data-fancybox='gallery' data-width='640'  href='"+link+"'>"+infor.name+"</a>"+
+        "</div>"
+    +"</div>");
+       }else{
+            $(".message-chat").append("<div class='message self_position'>"+
+            "<div class='horizontal_m'>"+
+                " <a data-fancybox='gallery' href='"+link+"'><img class='user' style='margin-top: 10px ; background-color:"+data.color+";' src='" + link +"'></a>"+
+            "</div>"
         +"</div>");
+       }
         //scroll bar
         $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
     }
@@ -62,11 +77,23 @@ $(document).ready(function(){
     var infor = {
         "name": data.fileInfo.name,
         "dir": data.fileInfo.dir,
+        "type": data.fileInfo.type,
     }
     var link = infor.dir.split("\\")[1]+"\\"+infor.dir.split("\\")[2];
-       $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
-       "<a data-fancybox='gallery' href='"+link+"'><img class='m-content' style='background-color:"+data.color+"' src='"+ link +"' ></a>"
-       +"</div>");
+    if(infor.type != "image/jpeg"){
+        $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
+        "<a  href='"+link+"' class='m-content' style='background-color:"+data.color+"' >"+infor.name+"</a>"
+        +"</div>");
+    }else if(infor.type == "video/x-ms-wmv"){
+        $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
+        "<a data-fancybox='video'  data-width='640'  href='"+link+"'>"+infor.name+"</a>"
+        +"</div>");
+    }
+    else{
+        $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
+        "<a data-fancybox='gallery' href='"+link+"'><img class='m-content' style='background-color:"+data.color+"' src='"+ link +"' ></a>"
+        +"</div>");
+    }
     //scroll bar
     $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
     }
