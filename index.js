@@ -1,4 +1,5 @@
 const express = require('express');
+
 const app = express()
 const session = require("express-session");
 const SocketIOFile = require('socket.io-file');
@@ -22,6 +23,7 @@ app.use(express.static('helper'));//set path to local file
 app.get('/socket.io-file-client.js', (req, res, next) => {
 	return res.sendFile(__dirname + '/node_modules/socket.io-file-client/socket.io-file-client.js');
 });
+
 
 //create socket server
 const http = require('http').Server(app);
@@ -109,7 +111,6 @@ io.on('connection', (socket) =>{
 		console.log('Aborted: ', fileInfo);
     });
     
-
 
     console.log("new user connect");
     socket.on("register", (data)=>{

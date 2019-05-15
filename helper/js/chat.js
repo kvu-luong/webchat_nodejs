@@ -1,13 +1,12 @@
-$(document).ready(function(){
-    
+$(document).ready(function()
    //select and upload file
     $("#select-file").on("click", function(){
-            $("#file").click();//get file
+        $("#file").click();//get file
     });
 
     $("#btn-chat").on("click",function(){
         $("#get_image").click();//upload file
-    })
+    });
        
 
    //---------------------------
@@ -100,6 +99,7 @@ $(document).ready(function(){
         
    };
    //-----------------------
+
     $(".user-name").show(2000);
     $(".chat-room").hide();
     //button
@@ -207,10 +207,9 @@ $(document).ready(function(){
                 "<span class='m-time' style='justify-content: flex-end ; padding-top: 0px;'>"+data.time+"</span>"+ 
             "</div>"
          +"</div>");
-
          //scroll bar
         $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
-    });
+
     socket.on("other_update_message", (data)=>{
         chatroom.append("<div class='message' style='align-self: flex-start;'> <span class='user'>" + data.username +"</span>  "+
          "<span class='m-content' style='background-color:"+data.color+"'>"+ data.message + "</span>"
@@ -219,6 +218,7 @@ $(document).ready(function(){
 
          //scroll bar
         $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
+
     });
     message.focusin(()=>{
         socket.emit('typing');

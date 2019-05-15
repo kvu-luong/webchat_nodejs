@@ -23,5 +23,6 @@
     "socket.io-file": "^2.0.31",
     "socket.io-file-client": "^2.0.13",
     "socketio-file-upload": "^0.7.0"
+
   }
 }
