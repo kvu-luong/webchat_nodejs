@@ -49,7 +49,7 @@ $(document).ready(function(){
        
        $(".message-chat").append("<div class='message self_position'>"+
            "<div class='horizontal_m'>"+
-               " <img class='user' style='margin-top: 10px ; background-color:"+data.color+";' src='" + link +"'>"+
+               " <a data-fancybox='gallery' href='"+link+"'><img class='user' style='margin-top: 10px ; background-color:"+data.color+";' src='" + link +"'></a>"+
            "</div>"
         +"</div>");
         //scroll bar
@@ -65,7 +65,7 @@ $(document).ready(function(){
     }
     var link = infor.dir.split("\\")[1]+"\\"+infor.dir.split("\\")[2];
        $(".message-chat").append("<div class='message' style='align-self: flex-start;'>" +
-       "<img class='m-content' style='background-color:"+data.color+"' src='"+ link +"' >"
+       "<a data-fancybox='gallery' href='"+link+"'><img class='m-content' style='background-color:"+data.color+"' src='"+ link +"' ></a>"
        +"</div>");
     //scroll bar
     $('.message-chat').scrollTop(parseInt($('.message-chat')[0].scrollHeight));
