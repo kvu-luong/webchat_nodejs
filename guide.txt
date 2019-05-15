@@ -1,0 +1,4 @@
+npm init - create package.json
+npm install nodemon --dev : install nodemon
+npm install express socket.io ejs
+npm install body-parser

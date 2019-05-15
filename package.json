@@ -1,0 +1,27 @@
+{
+  "name": "chat_room",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "demo": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "formidable": "^1.2.1",
+    "fs": "0.0.1-security",
+    "mysql": "^2.17.1",
+    "nodemon": "^1.18.11",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
+    "socket.io-file": "^2.0.31",
+    "socket.io-file-client": "^2.0.13",
+    "socketio-file-upload": "^0.7.0"
+  }
+}

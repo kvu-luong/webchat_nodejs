@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link  rel ="stylesheet" type = "text/css" href="./css/style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Document</title>
+</head>
+<body>
+
+    <div class="user-name">
+        <h3>What is your name?</h3>
+        <input type = "text" placeholder = "Type your name here" name="username" id="username" required autocomplete="off" autofocus/>
+        <button id="btn-login">Register</button>
+    </div>
+
+    <div class="chat-room">
+        <div class="logout">
+            Hello <span class="current-user"></span>
+            <button id="logout"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
+        </div>
+        <div class="content-user">
+            <div class="chat">
+                <div class="content">
+                    <div class="message-chat">
+                    <!-- chat content -->
+                    </div>
+                    <div class="typing">
+                        <span class="name_of_user"></span><span>is typing</span><img src="./img/loader.gif" alt=""/>
+                    </div>
+                </div>
+                
+                <div class="chat-form">
+                        <input type="text" name="content" placeholder = "Type your message here!" id="message"  autocomplete="off">
+                        <div class="my-select-box ">
+                            <form id="form" action="/upload" enctype="multipart/form-data" method="post">
+                                <input type="file" name="upload" id="file"  multiple>
+                                <button id="get_image" type="submit" value="Upload">Upload Image</i></button>
+                            </form>
+                         </div>
+                         <button id="select-file" type="submit" value="Upload"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                        <button id="btn-chat"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                </div> 
+            </div>
+            <div class="user-online">
+                <div class="title">User ONLINE</div>
+                <div id="user-onl_content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="private">
+        <div class="private-head">
+            <div>Chat with <span class="chat-with"></span></div>
+            <div><button class="close" id="close">Close</button></div>
+        </div>
+        <div class="private-content">
+                <div class="private-message_chat">
+                <!-- chat content -->
+                </div>
+                <div class="private-typing">
+                    <span class="name_of_user"></span><span>is typing</span><img src="./img/loader.gif" alt=""/>
+                </div>
+        </div>
+        <div class="private-chat">
+                <input type="text" name="content" placeholder = "Type your message here!" id="private_message"  autocomplete="off">
+                <button id="bnt-private__chat"> Chat </button>
+        </div>
+    </div>
+
+
+
+    <!-- script-->
+    <script src="js/jquery-latest.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script src="socket.io-file-client.js"></script>
+    <!-- <script src ="js/client.js"></script> -->
+    
+    <script src="/js/chat.js"></script>
+
+</body>
+</html>
